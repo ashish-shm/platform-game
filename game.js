@@ -242,6 +242,9 @@ Level.prototype.touches = function (pos, size, type) {
 State.prototype.update = function (time, keys) {
   let actors = this.actors.map((actor) => actor.update(time, this, keys));
   console.log(this);
+  var coinsLeft = document.querySelector(".coinsLeft");
+  coinsLeft.innerHTML =
+    this.actors.filter((a) => a.type === "coin").length + " Coins left";
 
   let newState = new State(this.level, actors, this.status);
 
@@ -384,8 +387,20 @@ function runLevel(level, Display) {
 }
 
 async function runGame(plans, Display) {
-  for (let level = 0; level < plans.length; ) {
+  let lives = 3;
+  let livesCount = document.querySelector(".lives");
+  livesCount.innerHTML = `${lives} Lives Left`;
+  for (let level = 0; level < plans.length && lives > 0; ) {
     let status = await runLevel(new Level(plans[level]), Display);
     if (status == "won") level++;
+    else lives--;
+    livesCount.innerHTML = `${lives} Lives Left`;
+  }
+  if (lives > 0) {
+    let next = document.querySelector(".nextLevel");
+    next.innerHTML = "Onto the Next Level";
+  } else {
+    let over = document.querySelector(".gameOver");
+    over.innerHTML = "Game Over";
   }
 }
